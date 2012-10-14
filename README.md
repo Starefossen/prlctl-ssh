@@ -15,3 +15,9 @@ Tested with Ubuntu Server 10.04 LTS and 12.04 LTS.
 ## Usage
 
 	$ ./prlctl-ssh <user>@<vm_id|vm_name>
+	
+### Make a shortcut cmd
+
+Make a shortcut to your favorite virtual machine by adding an alias to you `.bash_profile`
+
+	$ alias mymachine=./prlctl-ssh user@mymachine
