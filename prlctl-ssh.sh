@@ -10,14 +10,14 @@ getVmStatus() {
 # Get default interface of the vm
 # @param $1 vm-name or id
 getVmIface() {
-  prlctl exec $1 route | grep '^default' | grep -o '[^ ]*$'
+  prlctl exec "$1" ip route | grep '^default' | sed 's/^.*dev \([^ \t]*\) .*$/\1/'
   return 0
 }
 
 # get ip address of vm
 # @param $1 vm-name or id
 getVmAddr() {
-  prlctl exec $1 ifconfig `getVmIface $vm` | grep "inet addr" | awk -F: '{print $2}' | awk '{print $1}'
+  prlctl exec "$1" ip addr show dev "$(getVmIface "$vm")" | awk '$1 == "inet" { sub("/.*", "", $2); print $2 }'
   return 0
 }
 
