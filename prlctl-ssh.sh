@@ -1,9 +1,10 @@
 #!/bin/bash
+set -e
 
 # get status of vm
 # @param $1 vm-name or id
 getVmStatus() {
-  prlctl list -o status $1 | tail -1
+  prlctl list -o status "$1" | tail -1
   return 0
 }
 
@@ -21,24 +22,24 @@ getVmAddr() {
   return 0
 }
 
-IFS='@' read -a array <<< "$1"
+IFS='@' read -r -a array <<< "$1"
 
 user=${array[0]}
 vm=${array[1]}
 running=0
 
-while [ $running == 0  ]; do
-  state=`getVmStatus $vm`
+while [ $running = 0  ]; do
+  state="$(getVmStatus "$vm")"
   case "$state" in
-    running )   addr=`getVmAddr $vm`
+    running )   addr="$(getVmAddr "$vm")"
                 running=1
                 ;;
     suspended ) echo "Resuming virtual machine $vm"
-                prlctl resume $vm
+                prlctl resume "$vm"
                 sleep 5 
                 ;;
     stopped )   echo "Starting virtual machine $vm"
-                prlctl start $vm
+                prlctl start "$vm"
                 sleep 10
                 ;;
     *)          echo "Unknown status $state of virtual machine $vm"
@@ -47,7 +48,6 @@ while [ $running == 0  ]; do
   esac
 done
 
-if [ $addr ]
-then
-  ssh $user@$addr
+if [ "$addr" ]; then
+  ssh "$user@$addr"
 fi
